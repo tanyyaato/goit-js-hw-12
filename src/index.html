@@ -12,11 +12,15 @@
 <body>
 
 
-  <section>
-    <h1>Example page title</h1>
-    <!-- Path to images as from index.html file -->
-    <img src="./img/javascript.svg" alt="" />
-  </section>
+  <form autocomplete="off" class="form js-form">
+    <input type="text" class="input js-input" name="request" placeholder="Search images...">
+    <button type="submit" class="form-button js-form-button">Search</button>
+  </form>
+  <ul class="list"></ul>
+  <button type="button" class="load-more-btn" style="display: none;"> Load More</button>
+  <p class="end-text" style="display: none;"></p>
+
+
 
   <!-- Loads the specified .html file -->
 
