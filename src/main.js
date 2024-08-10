@@ -19,7 +19,7 @@ async function getRequest(event) {
   const query = form.elements.request.value.trim().toLowerCase();
   inputValue = query;
   if (!inputValue) {
-    return;
+    return catchError();
   }
   try {
     const response = await searchPhotoByQuery(inputValue, page, per_page);
@@ -28,18 +28,25 @@ async function getRequest(event) {
       markUpRequest(response.data.hits);
       loadMoreBtn.style.display = 'block';
     } else if (response.data.hits.length === 0) {
-      throw new Error(response.status);
+      throw new Error(error.response);
+    } else if (response.data.totalHits <= per_page) {
+      loadMoreBtn.style.display = 'none';
     }
-  } catch {
-    catchError();
+  } catch (error) {
+    console.log(error.message);
+
+    return catchError();
   }
   form.reset();
 }
 async function loadMore() {
-  const response = await searchPhotoByQuery(inputValue, page, per_page);
-  page += 1;
+  const response = await searchPhotoByQuery(inputValue, per_page);
+
+  console.log(page);
+  console.log(response.data.totalHits);
 
   if (page < Math.ceil(response.data.totalHits / per_page)) {
+    page += 1;
     markUpRequest(response.data.hits);
     loadMoreBtn.style.display = 'block';
   } else {

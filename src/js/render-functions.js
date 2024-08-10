@@ -4,6 +4,7 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
+const loadMoreBtn = document.querySelector('.load-more-btn');
 const lightbox = new SimpleLightbox('.list  a', {
   captionsData: 'alt',
 });
@@ -52,6 +53,7 @@ export function markUpRequest(hits) {
 //
 
 export function catchError() {
+  loadMoreBtn.style.display = 'none';
   return iziToast.show({
     message:
       'Sorry, there are no images matching your search query. Please try again!',
