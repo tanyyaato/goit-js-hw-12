@@ -17,9 +17,11 @@ form.addEventListener('submit', getRequest);
 async function getRequest(event) {
   event.preventDefault();
   picturesList.innerHTML = '';
+
   page = 1;
   const query = form.elements.request.value.trim().toLowerCase();
   inputValue = query;
+
   if (!inputValue) {
     return catchError();
   }
@@ -30,17 +32,19 @@ async function getRequest(event) {
     if (response.data.hits.length > 0) {
       markUpRequest(response.data.hits);
 
-      if (response.data.totalHits > per_page) {
-        loadMoreBtn.style.display = 'block';
+      if (response.data.totalHits <= per_page) {
+        loadMoreBtn.style.display = 'none';
+        warningText.style.display = 'none';
       } else {
-        loadMoreBtn.remove();
-        warningText.remove();
+        loadMoreBtn.style.display = 'block';
+        warningText.style.display = 'none';
       }
-    } else if (response.data.hits.length === 0) {
-      throw new Error(error.response);
+    } else {
+      throw new Error('No results found');
     }
   } catch (error) {
     console.log(error.message);
+    warningText.style.display = 'none';
     return catchError();
   } finally {
     form.reset();
@@ -53,9 +57,9 @@ async function loadMore() {
   try {
     const response = await searchPhotoByQuery(inputValue, page, per_page);
     markUpRequest(response.data.hits);
+
     if (page >= totalPage) {
-      loadMoreBtn.removeEventListener('click', loadMore);
-      loadMoreBtn.replaceWith(warningText);
+      loadMoreBtn.style.display = 'none';
       warningText.style.display = 'block';
       warningText.textContent =
         "We're sorry, but you've reached the end of search results.";
