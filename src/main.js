@@ -7,9 +7,11 @@ const form = document.querySelector('.js-form');
 const warningText = document.querySelector('.end-text');
 const loadMoreBtn = document.querySelector('.load-more-btn');
 
-let page = 1;
+let page = null;
 let per_page = 15;
 let inputValue = '';
+let totalPage = null;
+
 loadMoreBtn.addEventListener('click', loadMore);
 form.addEventListener('submit', getRequest);
 async function getRequest(event) {
@@ -23,37 +25,42 @@ async function getRequest(event) {
   }
   try {
     const response = await searchPhotoByQuery(inputValue, page, per_page);
+    totalPage = Math.ceil(response.data.totalHits / per_page);
+
     if (response.data.hits.length > 0) {
-      page += 1;
       markUpRequest(response.data.hits);
-      loadMoreBtn.style.display = 'block';
+
+      if (response.data.totalHits > per_page) {
+        loadMoreBtn.style.display = 'block';
+      } else {
+        loadMoreBtn.remove();
+        warningText.remove();
+      }
     } else if (response.data.hits.length === 0) {
       throw new Error(error.response);
-    } else if (response.data.totalHits <= per_page) {
-      loadMoreBtn.style.display = 'none';
     }
   } catch (error) {
     console.log(error.message);
-
     return catchError();
+  } finally {
+    form.reset();
   }
-  form.reset();
 }
+
 async function loadMore() {
-  const response = await searchPhotoByQuery(inputValue, per_page);
+  page += 1;
 
-  console.log(page);
-  console.log(response.data.totalHits);
-
-  if (page < Math.ceil(response.data.totalHits / per_page)) {
-    page += 1;
+  try {
+    const response = await searchPhotoByQuery(inputValue, page, per_page);
     markUpRequest(response.data.hits);
-    loadMoreBtn.style.display = 'block';
-  } else {
-    loadMoreBtn.removeEventListener('click', loadMore);
-    loadMoreBtn.replaceWith(warningText);
-    warningText.style.display = 'block';
-    warningText.textContent =
-      "We're sorry, but you've reached the end of search results.";
+    if (page >= totalPage) {
+      loadMoreBtn.removeEventListener('click', loadMore);
+      loadMoreBtn.replaceWith(warningText);
+      warningText.style.display = 'block';
+      warningText.textContent =
+        "We're sorry, but you've reached the end of search results.";
+    }
+  } catch (error) {
+    console.log(error.message);
   }
 }
