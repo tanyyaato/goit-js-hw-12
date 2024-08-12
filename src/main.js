@@ -47,9 +47,7 @@ async function getRequest(event) {
 }
 
 async function loadMore() {
-  if (page >= totalPage) {
-    return;
-  }
+  
 
   page += 1;
   try {
