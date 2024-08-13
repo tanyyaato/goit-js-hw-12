@@ -6,6 +6,7 @@ const picturesList = document.querySelector('.list');
 const form = document.querySelector('.js-form');
 const warningText = document.querySelector('.end-text');
 const loadMoreBtn = document.querySelector('.load-more-btn');
+const loader = document.querySelector('.loader');
 
 let page = null;
 let per_page = 15;
@@ -16,8 +17,10 @@ loadMoreBtn.addEventListener('click', loadMore);
 form.addEventListener('submit', getRequest);
 async function getRequest(event) {
   event.preventDefault();
+  loader.classList.remove('loader-hidden');
   picturesList.innerHTML = '';
   warningText.style.display = 'none';
+  loadMoreBtn.style.display = 'none';
   page = 1;
   const query = form.elements.request.value.trim().toLowerCase();
   inputValue = query;
@@ -28,6 +31,7 @@ async function getRequest(event) {
 
   try {
     const response = await searchPhotoByQuery(inputValue, page, per_page);
+    loader.classList.add('loader-hidden');
     totalPage = Math.ceil(response.data.totalHits / per_page);
 
     if (response.data.hits.length > 0) {
@@ -43,6 +47,7 @@ async function getRequest(event) {
     catchError();
   } finally {
     form.reset();
+    pageScroll();
   }
 }
 
@@ -62,5 +67,14 @@ async function loadMore() {
     }
   } catch (error) {
     console.log(error.message);
+  } finally {
+    pageScroll();
   }
+}
+function pageScroll() {
+  const itemHeight = picturesList.children[0].getBoundingClientRect().height;
+  window.scrollBy({
+    top: itemHeight * 2,
+    behavior: 'smooth',
+  });
 }
