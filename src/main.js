@@ -25,7 +25,8 @@ async function getRequest(event) {
   const query = form.elements.request.value.trim().toLowerCase();
   inputValue = query;
 
-  if (!inputValue) {
+  if (inputValue === '') {
+    loader.classList.add('loader-hidden');
     return catchError();
   }
 
