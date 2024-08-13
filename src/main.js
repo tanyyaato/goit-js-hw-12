@@ -17,7 +17,6 @@ loadMoreBtn.addEventListener('click', loadMore);
 form.addEventListener('submit', getRequest);
 async function getRequest(event) {
   event.preventDefault();
-  loader.classList.remove('loader-hidden');
   picturesList.innerHTML = '';
   warningText.style.display = 'none';
   loadMoreBtn.style.display = 'none';
@@ -26,11 +25,11 @@ async function getRequest(event) {
   inputValue = query;
 
   if (inputValue === '') {
-    loader.classList.add('loader-hidden');
     return catchError();
   }
 
   try {
+    loader.classList.remove('loader-hidden');
     const response = await searchPhotoByQuery(inputValue, page, per_page);
     loader.classList.add('loader-hidden');
     totalPage = Math.ceil(response.data.totalHits / per_page);
