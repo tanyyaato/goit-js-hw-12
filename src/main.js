@@ -52,8 +52,6 @@ async function getRequest(event) {
 }
 
 async function loadMore() {
-  
-
   page += 1;
   try {
     const response = await searchPhotoByQuery(inputValue, page, per_page);
@@ -76,3 +74,4 @@ function pageScroll() {
     behavior: 'smooth',
   });
 }
+// dkd
